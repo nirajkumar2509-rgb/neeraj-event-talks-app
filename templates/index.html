@@ -121,6 +121,9 @@
                 <i class="fa-solid fa-magnifying-glass-minus empty-icon"></i>
                 <h3>No updates found</h3>
                 <p>Try adjusting your search filters or queries.</p>
+                <button id="reset-filters-btn" class="action-btn secondary-btn" style="margin-top: 1rem;">
+                    Reset Filters & Search
+                </button>
             </div>
 
             <!-- Release Notes List -->
@@ -186,6 +189,11 @@
         <i class="fa-solid fa-circle-info toast-icon"></i>
         <span id="toast-message">Message goes here</span>
     </div>
+
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="back-to-top-btn" title="Back to Top">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
 
     <!-- Custom JS -->
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>

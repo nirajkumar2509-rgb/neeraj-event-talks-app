@@ -36,6 +36,8 @@ const clearSearchBtn = document.getElementById('clear-search');
 const filterBtns = document.querySelectorAll('.filter-btn');
 const retryBtn = document.getElementById('retry-btn');
 const exportCsvBtn = document.getElementById('export-csv-btn');
+const resetFiltersBtn = document.getElementById('reset-filters-btn');
+const backToTopBtn = document.getElementById('back-to-top');
 
 // Tweet Modal Elements
 const tweetModal = document.getElementById('tweet-modal');
@@ -188,6 +190,17 @@ function filterAndRender() {
     }
 }
 
+// Highlight matched search terms in HTML content safely
+function highlightText(html, query) {
+    if (!query) return html;
+    const escapedQuery = query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const regex = new RegExp(`(<[^>]*>)|(${escapedQuery})`, 'gi');
+    return html.replace(regex, (match, p1, p2) => {
+        if (p1) return p1;
+        return `<mark class="search-highlight">${p2}</mark>`;
+    });
+}
+
 // Render release updates inside the timeline container
 function renderTimeline() {
     updatesList.innerHTML = '';
@@ -259,7 +272,7 @@ function renderTimeline() {
             // Card Body content
             const cardBody = document.createElement('div');
             cardBody.className = 'update-body';
-            cardBody.innerHTML = update.content_html;
+            cardBody.innerHTML = highlightText(update.content_html, searchQuery);
             updateCard.appendChild(cardBody);
 
             dateGroup.appendChild(updateCard);
@@ -505,6 +518,41 @@ function setupEventListeners() {
             closeTweetComposer();
         }
     });
+
+    // Reset Filters & Search
+    if (resetFiltersBtn) {
+        resetFiltersBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            searchQuery = '';
+            clearSearchBtn.style.display = 'none';
+            currentFilter = 'all';
+            filterBtns.forEach(b => {
+                b.classList.remove('active');
+                if (b.getAttribute('data-type') === 'all') {
+                    b.classList.add('active');
+                }
+            });
+            filterAndRender();
+        });
+    }
+
+    // Back to Top functionality
+    if (backToTopBtn) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 400) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
 }
 
 // Initial Page Load
