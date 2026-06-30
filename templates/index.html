@@ -62,6 +62,9 @@
                     <button id="refresh-btn" class="action-btn primary-btn">
                         <i class="fa-solid fa-rotate refresh-spinner"></i> Refresh Feed
                     </button>
+                    <button id="export-csv-btn" class="action-btn secondary-btn" style="margin-top: 10px; width: 100%;">
+                        <i class="fa-solid fa-file-csv"></i> Export to CSV
+                    </button>
                 </div>
             </div>
             
@@ -77,10 +80,16 @@
                     <h2>Release Timeline</h2>
                     <p class="subtitle">Stay updated with the latest Google BigQuery releases and enhancements</p>
                 </div>
-                <div class="header-stats">
-                    <div class="stat-badge">
-                        <span id="total-count" class="stat-number">-</span>
-                        <span class="stat-label">Updates</span>
+                <div class="header-right">
+                    <button id="theme-toggle" class="theme-toggle-btn" title="Toggle Light/Dark Mode">
+                        <i class="fa-solid fa-moon theme-icon-dark"></i>
+                        <i class="fa-solid fa-sun theme-icon-light"></i>
+                    </button>
+                    <div class="header-stats">
+                        <div class="stat-badge">
+                            <span id="total-count" class="stat-number">-</span>
+                            <span class="stat-label">Updates</span>
+                        </div>
                     </div>
                 </div>
             </header>

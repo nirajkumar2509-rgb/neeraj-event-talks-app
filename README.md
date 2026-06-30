@@ -1,28 +1,81 @@
 # BigQuery Release Hub 🚀
 
-A modern, responsive Flask web application that fetches, parses, and displays Google Cloud BigQuery release notes in a clean, interactive timeline. 
+A modern, responsive Flask web application that fetches, parses, and displays Google Cloud BigQuery release notes in a clean, interactive, and categorized timeline interface.
 
-## Features
+---
 
-- **Live Release Feed**: Fetches the official Google Cloud BigQuery release notes Atom feed in real-time.
-- **Smart Parsing**: Automatically breaks down large GCP updates into individual sub-updates by category (Features, Changes, Deprecations, Preview/Beta) for better readability.
-- **Filtering & Search**: Filter updates by their type (Feature, Change, Deprecation, Preview) or search through content instantly.
-- **In-Memory Caching**: Caches parsed feed data for 10 minutes to minimize network requests and optimize load speeds.
-- **Twitter/X Integration**: Share release updates directly to Twitter with a custom-built composer that respects character limits and formats the link and hashtags automatically.
-- **Premium Aesthetics**: Features a modern dark theme with smooth gradients, micro-animations, loading shimmers, and responsive layouts.
+## 📋 Table of Contents
+- [Features](#-features)
+- [Architecture Diagram](#-architecture-diagram)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Getting Started](#-getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Running the Server](#running-the-server)
+- [API Reference](#-api-reference)
 
-## Tech Stack
+---
 
-- **Backend**: Python, Flask
-- **Frontend**: Vanilla HTML5, CSS3, JavaScript (ES6)
-- **Icons & Fonts**: Google Fonts (Inter, Outfit), FontAwesome (Premium Icons)
+## ✨ Features
 
-## Getting Started
+- **Live Release Feed Parser**: Automatically connects to the official Google Cloud BigQuery Atom feed to retrieve real-time announcements.
+- **Granular Splitting**: Segments bulk daily GCP digests into individual, cleanly organized updates categorized by type (e.g. *Feature*, *Change*, *Deprecation*, *Preview*).
+- **10-Minute Caching**: Caches raw feed content in-memory (`600` second TTL) to accelerate response times and avoid hitting Google's servers on every reload.
+- **Search & Category Filters**: Real-time filtering by category type and interactive full-text search across timestamps and text content.
+- **Twitter/X Sharing**: A custom sharing composer that auto-formats your selected update, truncates the message (under the 280-character limit), appends tags/links, and redirects using Twitter web intents.
+- **Premium Aesthetics**: Features a modern dark theme with smooth gradients, responsive layout panels, loading skeleton shimmers, and micro-animations.
+
+---
+
+## 📐 Architecture Diagram
+
+```mermaid
+graph TD
+    User([User Browser])
+    JS[static/js/app.js]
+    HTML[templates/index.html]
+    CSS[static/css/style.css]
+    Flask[app.py Flask Server]
+    Cache[(In-Memory Cache)]
+    GCPFeed[Google Cloud Atom Feed]
+
+    User -->|Interacts| HTML
+    HTML -->|Loads| CSS
+    HTML -->|Triggers events| JS
+    JS -->|AJAX Fetch /api/release-notes| Flask
+    Flask -->|Checks cache expiry| Cache
+    Flask -->|Fetch XML if cache stale| GCPFeed
+    GCPFeed -->|XML| Flask
+    Flask -->|Saves parsed JSON| Cache
+    Flask -->|JSON Response| JS
+    JS -->|Render DOM| HTML
+```
+
+---
+
+## 🛠️ Tech Stack
+
+* **Backend**: Python 3, Flask
+* **Frontend**: Vanilla HTML5, CSS3, JavaScript (ES6)
+* **Icons & Fonts**: Google Fonts (Inter, Outfit), FontAwesome
+
+---
+
+## 📂 Project Structure
+
+* **`app.py`**: Core Flask application, in-memory caching mechanism, and XML parsing engine.
+* **`templates/index.html`**: Premium layout grid, Twitter composer modal structure, and loading templates.
+* **`static/css/style.css`**: Color variables (HSL dark theme), UI styles, transitions, and shimmer loading keyframes.
+* **`static/js/app.js`**: API calls, state management, search/filter execution, modal mechanics, and event delegation.
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
-
-- Python 3.8+
-- `pip` (Python package manager)
+* Python 3.8+
+* `pip` (Python package installer)
 
 ### Installation
 
@@ -31,42 +84,43 @@ A modern, responsive Flask web application that fetches, parses, and displays Go
    cd agy-cli-projects/bigquery-release-notes-app
    ```
 
-2. Create and activate a virtual environment (optional but recommended):
+2. (Optional) Create and activate a Python virtual environment:
    ```bash
    python3 -m venv venv
    source venv/bin/activate
    ```
 
-3. Install dependencies:
+3. Install required Flask dependency:
    ```bash
-   pip install flask
+   pip install Flask
    ```
 
-### Running the Application
+### Running the Server
 
-Start the Flask development server:
+Start the application with:
 ```bash
 python app.py
 ```
 
-By default, the server runs on **port 5001** to avoid conflicts with AirPlay Receiver on macOS. Access the application in your browser at:
-`http://localhost:5001`
+* **Note:** By default, the server launches on **port 5001** to avoid macOS AirPlay Receiver port clashes (port 5000).
+* Access the app in your browser at `http://localhost:5001`.
 
-## API Endpoints
+---
 
-### `GET /api/release-notes`
+## 📡 API Reference
 
-Fetches and returns the parsed release notes in JSON format.
+### Get Release Notes
+Returns the parsed list of release notes.
 
-**Query Parameters:**
-- `refresh` (optional): Set to `true` to bypass cache and force-fetch the latest updates from the live Google Cloud RSS feed.
-
-**Example Response:**
+* **Endpoint:** `GET /api/release-notes`
+* **Query Parameters:**
+  - `refresh` (optional): Set to `true` to force a cache refresh and query live Google Cloud data.
+* **Response Format:**
 ```json
 {
   "success": true,
-  "fetched_live": true,
-  "last_updated": "2026-06-26 23:00:00",
+  "fetched_live": false,
+  "last_updated": "2026-06-30 21:51:20",
   "data": [
     {
       "date": "June 25, 2026",
@@ -84,11 +138,3 @@ Fetches and returns the parsed release notes in JSON format.
   ]
 }
 ```
-
-## Project Structure
-
-- [app.py](file:///Users/nee13971/agy-cli-projects/bigquery-release-notes-app/app.py): Core Flask server, caching, and Atom XML feed parser.
-- [templates/index.html](file:///Users/nee13971/agy-cli-projects/bigquery-release-notes-app/templates/index.html): Premium dashboard UI layout and Twitter modal.
-- [static/css/style.css](file:///Users/nee13971/agy-cli-projects/bigquery-release-notes-app/static/css/style.css): Main design system, dark mode styling, and animations.
-- [static/js/app.js](file:///Users/nee13971/agy-cli-projects/bigquery-release-notes-app/static/js/app.js): Timeline rendering, filtering, search logic, and Twitter integration.
-- [.gitignore](file:///Users/nee13971/agy-cli-projects/bigquery-release-notes-app/.gitignore): Git ignore rules for virtual environments, caches, and system files.
